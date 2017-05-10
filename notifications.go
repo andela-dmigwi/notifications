@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 func createToken(credentials string) string {
@@ -32,32 +34,26 @@ func makeAPICall(token string) {
 	var details Details
 	body, _ := ioutil.ReadAll(resp.Body)
 	_ = json.Unmarshal(body, &details)
-	for _, element := range details {
-		fmt.Println(element)
+	for position, element := range details {
+		fmt.Printf("%d. %s\n", (position + 1), element.Subject.Title)
 	}
 
 }
 
 func main() {
-
-	var (
-		username string
-		password string
-	)
-
+	var username string
 	fmt.Println("Enter Your github Username:")
 	if _, err := fmt.Scanf("%s", &username); err != nil {
 		fmt.Printf(" Error: %s\n Occured", err)
 		return
 	}
 	fmt.Println("Enter Your github password:")
-	if _, err := fmt.Scanf("%s", &password); err != nil {
+	password, err := terminal.ReadPassword(0)
+	if err != nil {
 		fmt.Printf(" Error: %s\n Occured", err)
 		return
 	}
-	user := fmt.Sprintf("%s:%s", username, password)
+	user := fmt.Sprintf("%s:%s", username, string(password))
 	token := createToken(user)
-	fmt.Printf("\nToken ::%s", token)
-	fmt.Printf("\n")
 	makeAPICall(token)
 }
