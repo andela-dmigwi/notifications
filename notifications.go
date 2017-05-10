@@ -1,11 +1,17 @@
 package main
 
+/**
+* This Program that lists all github notifications once
+* a user logs in.
+**/
+
 import (
 	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 
@@ -13,6 +19,10 @@ import (
 )
 
 func createToken(credentials string) string {
+	matched, _ := regexp.MatchString(`(([\w\d\-*_#]+){1}(:){1}([\w\d\-*_#]+){1})`, credentials)
+	if !matched {
+		return "Your username or password is wrong"
+	}
 	encoded := b64.StdEncoding.EncodeToString([]byte(credentials))
 	return strings.TrimRight(encoded, "=")
 }
@@ -30,7 +40,6 @@ func makeAPICall(token string) {
 			Title string `json:"title"`
 		} `json:"subject"`
 	}
-
 	var details Details
 	body, _ := ioutil.ReadAll(resp.Body)
 	_ = json.Unmarshal(body, &details)
