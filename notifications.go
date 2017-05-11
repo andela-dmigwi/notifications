@@ -18,10 +18,12 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 )
 
+const errResp string = "Your username or password is wrong"
+
 func createToken(credentials string) string {
 	matched, _ := regexp.MatchString(`(([\w\d\-*_#]+){1}(:){1}([\w\d\-*_#]+){1})`, credentials)
 	if !matched {
-		return "Your username or password is wrong"
+		return errResp
 	}
 	encoded := b64.StdEncoding.EncodeToString([]byte(credentials))
 	return strings.TrimRight(encoded, "=")
@@ -43,8 +45,9 @@ func makeAPICall(token string) {
 	var details Details
 	body, _ := ioutil.ReadAll(resp.Body)
 	_ = json.Unmarshal(body, &details)
+	fmt.Print("\nListing Notifications")
 	for position, element := range details {
-		fmt.Printf("%d. %s\n", (position + 1), element.Subject.Title)
+		fmt.Printf("\n%d. %s", (position + 1), element.Subject.Title)
 	}
 
 }
@@ -64,5 +67,11 @@ func main() {
 	}
 	user := fmt.Sprintf("%s:%s", username, string(password))
 	token := createToken(user)
-	makeAPICall(token)
+	// If err terminate the program and return the error
+	if token == errResp {
+		fmt.Println(token)
+	} else {
+		makeAPICall(token)
+	}
+
 }
