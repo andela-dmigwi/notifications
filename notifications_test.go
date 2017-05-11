@@ -54,7 +54,7 @@ func TestMakeAPICall(t *testing.T) {
 	output, _ := ioutil.ReadAll(r)
 	os.Stdout = rescueStdout
 
-	assert.Contains("1. New PR merged\n", string(output), "Output should contain the notification")
+	assert.Contains("\nListing Notifications\n1. New PR merged", string(output), "Output should contain the notification")
 
 }
 
