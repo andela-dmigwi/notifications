@@ -1,2 +1,4 @@
-# notifications
-Command line application with displaying git notifications.
+#### List Github Notifications
+Command line application in Golang that displays all your git notifications once you have logged in.
+
+
